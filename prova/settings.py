@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+import shutil
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,6 +82,17 @@ DATABASES = {
     }
 }
 
+# Vercel Deployment Helper
+# O Vercel possui um file system read-only, com exceção da pasta /tmp.
+# Aqui copiamos o banco SQLite para o /tmp para permitir escritas (como sessões e logins)
+if os.environ.get('VERCEL') == '1':
+    TMP_DB_PATH = '/tmp/db.sqlite3'
+    if not os.path.exists(TMP_DB_PATH):
+        try:
+            shutil.copy2(BASE_DIR / 'db.sqlite3', TMP_DB_PATH)
+        except Exception:
+            pass
+    DATABASES['default']['NAME'] = TMP_DB_PATH
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
