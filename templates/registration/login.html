@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Acessar Sistema{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+<div class="col-md-5 col-lg-4">
+<div class="card shadow-lg border-0 mt-4">
+<div class="card-body p-4 p-md-5">
+<div class="text-center mb-4">
+<div class="bg-primary text-white d-inline-block rounded-circle p-3 mb-3">
+<i class="fas fa-lock fa-2x"></i>
+</div>
+<h2 class="fw-bold">Bem-vindo</h2>
+<p class="text-muted">Acesse sua conta para continuar</p>
+</div>
+
+            <form method="post" id="login-form">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">{{ field.label }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                {% if "username" in field.name %}
+                                    <i class="fas fa-user small"></i>
+                                {% else %}
+                                    <i class="fas fa-key small"></i>
+                                {% endif %}
+                            </span>
+                            {# O Django renderiza o input aqui #}
+                            {{ field }}
+                        </div>
+                        {% for error in field.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm">Entrar no Sistema</button>
+                </div>
+            </form>
+
+            <div class="text-center mt-4">
+                <hr class="text-muted opacity-25">
+                <a href="{% url 'password_reset' %}" class="text-decoration-none small text-secondary">
+                    Esqueceu sua senha? <span class="text-primary fw-bold">Recuperar</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4 text-muted small">
+        Não tem uma conta? <a href="{% url 'singup' %}" class="fw-bold text-primary text-decoration-none">Cadastre-se agora</a>
+    </div>
+</div>
+
+
+</div>
+
+<script>
+// Script para aplicar as classes do Bootstrap nos campos gerados pelo Django
+// Isso evita o uso de CSS customizado e usa apenas o framework linkado.
+document.addEventListener("DOMContentLoaded", function() {
+const inputs = document.querySelectorAll('#login-form input');
+inputs.forEach(input => {
+if (input.type !== 'hidden') {
+input.classList.add('form-control');
+}
+});
+});
+</script>
+
+{% endblock %}
